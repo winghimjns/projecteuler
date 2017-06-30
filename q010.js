@@ -1,41 +1,41 @@
 
 const getPrimeSum = max => {
-
-    const listOfPrime = [2];
-    var sum = 0;
-
-    // 3 is the second prime number
-    outer: for(var i = 3;; i+=2) {
-        inner: for(let j = 0; j < listOfPrime.length; j++) {
-            const testPrime = listOfPrime[j];
-
-            //if(i / 2 < testPrime) {
-            //    console.log(i, listOfPrime);
-            //    continue outer;
-            //}
-
-            if(i % testPrime === 0) {
-                // not prime, break
-                continue outer;
-            }
-        }
-
-        if(i >= max) {
-            return sum;
-        }
-
-        listOfPrime.push(i);
-        sum += (i);
-
-    }
+	// in throry, 2 is the first prime
+	const primes = [2];
+	var isPrime = false;
+	var sum = 2;
+	
+	for(var i = 3; i <= max; i+=2) {
+		// assuming it's a prime
+		isPrime = true;
+		
+		for(var j = 0; j < primes.length; j++) {
+			const prime = primes[j];
+			
+			// check if the current prime is bigger than test number's half, stop
+			if(prime > (i >> 1)) {
+				break;
+			}
+			
+			// check if the current testing can be divided by current prime
+			if(i % prime === 0) {
+				// then i should not be prime
+				isPrime = false;
+				break;
+			}
+			
+		}
+		
+		if(isPrime) {
+			sum += i;
+			primes.push(i);
+		}
+	}
+	
+	return sum;
 };
 
+const answer = () => getPrimeSum(100);
 
-const answer = () => {
-    const primes = getPrimeSum(2000000);
-    return primes;
-};
 
 console.log(answer());
-
-// answer is 142915828925 - 2000003 = 142913828922, but used more than 1 min
