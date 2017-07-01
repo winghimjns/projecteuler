@@ -64,4 +64,4 @@ const answer = () => {
 console.log(answer());
 
 // item 12375, the answer is 76576500, which has 574 facters
-// this took me half and hours to finish the calculation
+// this took me half an hour to finish the calculation
