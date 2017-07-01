@@ -26,7 +26,7 @@
 const nextTriangleNumber = (current = 0, nextIndex = 1) => current + nextIndex;
 const countFactors = num => {
 	var count = 0;
-	var limit = num >> 1
+	var limit = num >> 1;
 	for(var i = 1; i < limit; i++) {
 		if(num % i === 0) {
 			count++;
@@ -54,7 +54,7 @@ const answer = () => {
 	for(var i = 1;; i++) {
 		current = nextTriangleNumber(current, i);
 		const count = countFactors(current);
-		console.log(i, current, count);
+		
 		if(count >= FACTOR_GOAL) {
 			return current;
 		}
