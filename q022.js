@@ -37,13 +37,19 @@ const bigSum = arr => {
 const nameValue = name => arraySum(name.split('').map(ch => ch.charCodeAt(0) - 64));
 
 
+// ================================================================================
+//    ANSWER
+// ================================================================================
+
 const answer = () => {
 	const fileContent = fs.readFileSync(filePath);
-	const names = JSON.parse(`[${fileContent}]`);
+	const names = JSON.parse(`[${fileContent}]`); // i know it's hacky 3:)
 	const scores = names.map(name => nameValue(name));
-	scores.sort((a, b) => a > b);
+	
+	scores.sort((a, b) => a - b);
 	
 	return bigSum(scores.map((score, index) => {
+		console.log(index, score, index === 938 && gg);
 		return score * (index + 1);
 	})).toFixed();
 };
