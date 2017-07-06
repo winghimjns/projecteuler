@@ -44,14 +44,11 @@ const nameValue = name => arraySum(name.split('').map(ch => ch.charCodeAt(0) - 6
 const answer = () => {
 	const fileContent = fs.readFileSync(filePath);
 	const names = JSON.parse(`[${fileContent}]`); // i know it's hacky 3:)
+	names.sort();
+	
 	const scores = names.map(name => nameValue(name));
 	
-	scores.sort((a, b) => a - b);
-	
-	return bigSum(scores.map((score, index) => {
-		console.log(index, score, index === 938 && gg);
-		return score * (index + 1);
-	})).toFixed();
+	return bigSum(scores.map((score, index) => score * (index + 1))).toFixed();
 };
 
 console.log(answer());
