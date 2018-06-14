@@ -35,15 +35,17 @@
  * and it's unable to calculate decimals
  * 
  */
+ 
+let gg = 0;
 class BigInteger {
 	
-	static fromReversedArrayInt(numbers) {
+	static fromArrayInt(numbers) {
 		const instance = new BigInteger(0);
-		instance.numbers = numbers.reverse();
+		instance.numbers = numbers;
 		return instance;
 	}
 	
-	constructor(numbers) {
+	constructor(numbers = 0) {
 		this.numbers = [...(numbers + '')].map(numStr => parseInt(numStr)).reverse();
 	}
 	
@@ -77,9 +79,7 @@ class BigInteger {
 			newInstanceNumbers.push(addingDigit);
 		}
 		
-		console.log(newInstanceNumbers);
-		
-		return BigInteger.fromReversedArrayInt(newInstanceNumbers);
+		return BigInteger.fromArrayInt(newInstanceNumbers);
 	}
 	
 	length() {
@@ -87,7 +87,13 @@ class BigInteger {
 	}
 	
 	toString() {
-		return this.numbers.reverse().join('');
+		return [...this.numbers].reverse().join('');
+	}
+	
+	clone() {
+		const newInstance = new BigInteger(0);
+		newInstance.numbers = [...this.numbers];
+		return newInstance;
 	}
 	
 }
@@ -104,7 +110,6 @@ const getFibonacciCache = {};
 // ================================================================================
 
 const getFibonacci = n => {
-	
 	if (getFibonacciCache.hasOwnProperty(n)) { return getFibonacciCache[n]; }
 	
 	if (n < 1) { throw new Error('positive integer please'); }
@@ -112,9 +117,14 @@ const getFibonacci = n => {
 	switch(n) {
 		case 1:
 		case 2:
-			return getFibonacciCache[n] = new BigInteger(1);
+			const newFibonacci = new BigInteger(1);
+			getFibonacciCache[n] = Object.freeze(newFibonacci.clone());
+			return newFibonacci;
 		default:
-			return getFibonacciCache[n] = new BigInteger(0).add(getFibonacci(n - 1)).add(getFibonacci(n - 2));
+			const last = getFibonacci(n - 1);
+			const last2 = getFibonacci(n - 2);
+			const newFabonacci = new BigInteger(0).add(last).add(last2);
+			return getFibonacciCache[n] = newFabonacci;
 	}
 }
 
@@ -125,14 +135,9 @@ const getFibonacci = n => {
 
 const solution = () => {
 	for(let i = 1;; i++) {
-		
-	
-		console.log(i + ': ', 	getFibonacci(i) + '');
-		
-		if (i === 10) { break; }
+		const fibonacci = getFibonacci(i);
+		if (fibonacci.length() >= 1000) { console.log(fibonacci.toString()); return i; }
 	}
-	console.log(getFibonacciCache);
 }
 
 console.log(solution());
-
