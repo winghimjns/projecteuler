@@ -51,9 +51,15 @@ const getArrayRepeatSequence = arr => {
 	if ([0, 1].indexOf(arr.length) !== -1) { return []; }
 	for(let i = 0; i < arr.length - 1; i++) {
 		const halfLength = ((arr.length - i) >> 1) + i;
-		const left = arr.slice(i, halfLength);
-		const right = arr.slice(halfLength);
-		if (arrayEquals(left, right)) { return left; }
+		let hasSequence = true;
+		
+		for(let j = 0; j < halfLength - i; j++) {
+			if (arr[i + j] !== arr[halfLength + j]) { hasSequence = false; }
+		}
+		
+		if (hasSequence) {
+			return arr.slice(halfLength);
+		}
 	}
 	return [];
 };
@@ -113,6 +119,7 @@ const solution = () => {
 	let maxSequenceLength = 0;
 	let maxSequenceIndex = -1;
 	for(let i = 2; i <= TRY_UNTIL; i++) {
+		console.log(i);
 		const sequenceLength = getDivideDecimalSequenceLength(i);
 		if (sequenceLength > maxSequenceLength) {
 			maxSequenceLength = sequenceLength;
@@ -122,4 +129,6 @@ const solution = () => {
 	return maxSequenceIndex;
 }
 
+//console.log(getArrayRepeatSequence([100, 40, 40]));
+//console.log(getDivideDecimalSequence(12));
 console.log(solution());
