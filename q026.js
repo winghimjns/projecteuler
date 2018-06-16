@@ -54,7 +54,10 @@ const getArrayRepeatSequence = arr => {
 		let hasSequence = true;
 		
 		for(let j = 0; j < halfLength - i; j++) {
-			if (arr[i + j] !== arr[halfLength + j]) { hasSequence = false; }
+			if (arr[i + j] !== arr[halfLength + j]) {
+				hasSequence = false;
+				break;
+			}
 		}
 		
 		if (hasSequence) {
@@ -65,7 +68,7 @@ const getArrayRepeatSequence = arr => {
 };
 
 
-const getDivideDecimalSequence = object => {
+const getDivideDecimalSequenceLength = object => {
 	let decimals = '';
 	let subject = 10;
 	let subjects = [];
@@ -103,12 +106,10 @@ const getDivideDecimalSequence = object => {
 		// do a check, check if the decimals is already in a sequence, and the subject 
 		//const repeatSequence = getRepeatSequence(decimals);
 		const subjectRepeatSequence = getArrayRepeatSequence(subjects);
-		if (subjectRepeatSequence.length !== 0) { return subjectRepeatSequence; }
+		if (subjectRepeatSequence.length !== 0) { return subjectRepeatSequence.length || 0; }
 		
 	}
 };
-
-const getDivideDecimalSequenceLength = object => getDivideDecimalSequence(object).length || 0;
 
 
 // ================================================================================
@@ -129,6 +130,4 @@ const solution = () => {
 	return maxSequenceIndex;
 }
 
-//console.log(getArrayRepeatSequence([100, 40, 40]));
-//console.log(getDivideDecimalSequence(12));
 console.log(solution());
