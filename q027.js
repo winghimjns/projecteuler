@@ -25,37 +25,6 @@
 const A_MAX = 1000;
 const B_MAX = 1000 - 1;
 
-// ================================================================================
-//    ADDONS
-// ================================================================================
-
-// assume the array is sorted
-Array.prototype.binarySearch = function(num) {
-	let left = 0;
-	let right = this.length;
-	let middle;
-	
-	// pre-conditions
-	if (this.length === 0) { return -1; }
-	if (num < this[0]) { return -1; }
-	if (num > this[this.length - 1]) { return -1; }
-	
-	while(left < right) {
-		middle = left + ((right - left) >> 1);
-		if (this[middle] === num) {
-			return middle;
-		} else if (num > this[middle]) {
-			if (left === middle) { break; }
-			left = middle;
-		} else if (num < this[middle]) {
-			if (right === middle) { break; }
-			right = middle;
-		}
-	}
-	
-	return -1;
-};
-
 
 // ================================================================================
 //    VARIABLES
@@ -72,29 +41,18 @@ const numberSort = (a, b) => a > b;
 
 const isPrime = num => {
 	if (num <= 1) { return false; }
-	if (primeNumbers.binarySearch(num) !== -1) { return true; }
-	if (num % 2 === 0 || nonPrimeNumbers.binarySearch(num) !== -1) { return false; }
+	if (primeNumbers.indexOf(num) !== -1) { return true; }
+	if (num % 2 === 0 || nonPrimeNumbers.indexOf(num) !== -1) { return false; }
 	
 	const numHalf = num >> 1;
 	for(let i = 3; i < numHalf; i += 2) {
 		if (num % i === 0) {
-			if (num > nonPrimeNumbers[nonPrimeNumbers.length - 1]) {
-				nonPrimeNumbers.push(num);
-			} else {
-				nonPrimeNumbers.push(num);
-				nonPrimeNumbers.sort(numberSort);
-			}
+			nonPrimeNumbers.push(num);
 			return false;
 		}
 	}
 	
-	if (num > primeNumbers[primeNumbers.length - 1]) {
-		primeNumbers.push(num);
-	} else {
-		primeNumbers.push(num);
-		primeNumbers.sort(numberSort);
-	}
-	
+	primeNumbers.push(num);
 	return true;
 }
 
