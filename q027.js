@@ -80,7 +80,6 @@ const answer = () => {
 				maxPrimeGenerated = primeCount;
 			}
 		}
-		console.log('a', a, primeNumbers.length, primeNumbers[primeNumbers.length - 1]);
 	}
 	
 	return bestFormula[0] * bestFormula[1];
