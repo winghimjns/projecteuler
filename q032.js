@@ -13,31 +13,80 @@
 //    CONSTANTS
 // ================================================================================
 
-const DIGIT_CHARACTERS = '12345789'; // 9 pandigital
+const DIGIT_CHARACTERS = '123456789'; // 9 pandigital
 
 
 // ================================================================================
-//    GENERATORS & ITERATOR
+//    GENERATORS & ITERATORS
 // ================================================================================
 
 const numberCombinationsGenerator = function* (digits) {
-	const digitChars = [...digits];
-	
 	if (digits.length === 2) {
-		const [firstChar, secondChar] = digitChars;
+		const firstChar = digits[0];
+		const secondChar = digits[1];
 		yield `${firstChar}${secondChar}`;
 		yield `${secondChar}${firstChar}`;
 	} else {
-		const [firstChar, ...restChars] = digitChars;
+		const firstChar = digits[0];
+		const restChars = digits.substr(1);
 		const output = [];
 		const subGenerator = numberCombinationsGenerator(restChars);
 		let nextValue = null;
 		
 		while(nextValue = subGenerator.next().value) {
-			yield firstChar + nextValue;
-			yield nextValue + firstChar;
+			for(let i = 0; i <= nextValue.length; i++) {
+				const firstSegment = nextValue.substr(0, i);
+				const secondSegment = nextValue.substr(i);
+				yield firstSegment + firstChar + secondSegment;
+			}
 		}
 	}
 };
 
-const numberCombinationsIterator = numberCombinationsGenerator(DIGIT_CHARACTERS);
+const segmentsGenerator = function* (str, segmentCount) {
+	const length = str.length;
+	for(let i = 1; i < length; i++) {
+		const firstSegment = str.substr(0, i);
+		const secondSegment = str.substr(i);
+		
+		if (segmentCount === 2) {
+			yield [firstSegment, secondSegment];
+		} else {			
+			const subsegmentsIterator = segmentsGenerator(secondSegment, segmentCount - 1);
+			
+			for(let subsegments of subsegmentsIterator) {
+				yield [firstSegment, ...subsegments];
+			}
+		}
+	}
+};
+
+// ================================================================================
+//    ANSWER
+// ================================================================================
+
+const answer = () => {
+	const numberCombinationsIterator = numberCombinationsGenerator(DIGIT_CHARACTERS);
+	const productSet = [];
+	for(let num of numberCombinationsIterator) {
+		const segmentsIterator = segmentsGenerator(num, 3);
+		for(let segments of segmentsIterator) {
+			if (segments[0].length + segments[1].length > (DIGIT_CHARACTERS.length >> 1) + 1) { continue; }
+			let [multiplicand, multiplier, product] = segments.map(num => parseInt(num));
+			if (productSet.indexOf(product) !== -1) { continue; }
+			if (multiplicand * multiplier === product) {	
+				productSet.push(product);
+			}
+		}
+	}
+	
+	let sum = 0;
+	
+	for(let product of productSet) {
+		sum += product;
+	}
+	
+	return sum;
+};
+
+console.log(answer());
