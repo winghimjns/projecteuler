@@ -14,15 +14,6 @@
  */
 
 // ================================================================================
-//   ADDONS
-// ================================================================================
-
-Array.prototype.binarySearch = function() {
-	
-};
-
-
-// ================================================================================
 //   CONSTANTS
 // ================================================================================
 
@@ -31,10 +22,51 @@ const MAX_B = 100;
 
 
 // ================================================================================
-//   VARIABLES
+//   MODELS
 // ================================================================================
 
-let numbers = [];
+class NumberPower {
+	constructor(base, power) {
+		this.base = base;
+		this.power = power;
+		
+		this.simplify();
+	}
+	
+	/**
+	 * if the base number is 'rootable' or 'self-dividable', simplify it. e.g. 4^4 to be 2^8
+	 * 
+	 * @return {NumberPower} instance of this class
+	 */
+	simplify() {
+		const halfBase = this.base >> 1;
+		
+		for(let i = 2; i <= halfBase; i++) {
+			let base = this.base;
+			let addedPower = 1;
+			
+			if (i * i > base) { return; }
+			
+			while(base % i === 0) {
+				base /= i;
+				addedPower++;
+				
+				if (base === i) {
+					this.base = base;
+					this.power *= addedPower;
+					return;
+				}
+			}
+		}
+	}
+	
+	toString() {
+		return JSON.stringify({
+			base: this.base,
+			power: this.power,
+		});
+	}
+}
 
 
 // ================================================================================
@@ -42,5 +74,17 @@ let numbers = [];
 // ================================================================================
 
 const answer = () => {
-	
+	const numberPowerSet = [];
+	for(let a = 2; a <= MAX_A; a++) {
+		for(let b = 2; b <= MAX_B; b++) {
+			const numberPower = new NumberPower(a, b);
+			const numberPowerString = numberPower.toString();
+			if (numberPowerSet.indexOf(numberPowerString) === -1) {
+				numberPowerSet.push(numberPowerString);
+			}
+		}
+	}
+	return numberPowerSet.length;
 };
+
+console.log(answer());
