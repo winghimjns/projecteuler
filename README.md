@@ -25,9 +25,9 @@ const primeNumberGenerator = function* () {
 	const primeFactors = [];
 	
 	const checkPrime = num => {
-		for(let i = 0; i < primeNumbers.length; i++) {
+		for(let i = 0; i < primeFactors.length; i++) {
 			
-			const prime = primeNumbers[i];
+			const prime = primeFactors[i];
 			
 			// !!! see this, I divide it instead of mod it. Because the second check it does with this quotient may reduce part of this iteration
 			const quotient = num / prime;
