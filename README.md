@@ -18,7 +18,7 @@ https://projecteuler.net
 
 另外，好多問題都會需要用到一個質數 generator，以下呢個係我嘅做法：
 
-‵‵‵js
+‵‵‵javascript
 const primeNumberGenerator = function* () {
 	
 	// possible prime factors; these prime numbers are going to divide / test the numbers which are possible to be primes.
@@ -53,7 +53,6 @@ const primeNumberGenerator = function* () {
 			yield i;
 		}
 	}
-	
 };
 
 // generate the first 100 prime numbers
