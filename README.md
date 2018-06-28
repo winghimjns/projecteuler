@@ -19,7 +19,7 @@ https://projecteuler.net
 另外，好多問題都會需要用到一個質數 generator，以下呢個係我嘅做法：
 
 ```javascript
-const primeNumberGenerator = function* () {
+const primeNumberGenerator = function* (max = Infinity) {
 	
 	// possible prime factors; these prime numbers are going to divide / test the numbers which are possible to be primes. It's basically just all prime numbers except 2
 	const primeFactors = [];
@@ -47,7 +47,7 @@ const primeNumberGenerator = function* () {
 	// first prime number is 2
 	yield 2;
 	
-	for(let i = 3;; i += 2) {
+	for(let i = 3; i <= max; i += 2) {
 		if (checkPrime(i)) {
 			primeFactors.push(i);
 			yield i;
@@ -55,15 +55,10 @@ const primeNumberGenerator = function* () {
 	}
 };
 
-// generate the first 100 prime numbers
-let count = 0;
-
-for(let primeNumber of primeNumberGenerator()) {
+// generate all primenumbers under 100
+for(let primeNumber of primeNumberGenerator(100)) {
 	console.log(primeNumber);
-	count++;
-	if (count >= 100) { break; }
 }
-
 ```
 
 2018-06-26
