@@ -19,11 +19,12 @@ https://projecteuler.net
 另外，好多問題都會需要用到一個質數 generator，以下呢個係我嘅做法：
 
 ```javascript
-const primeNumberGenerator = function* () {
+const primeNumberGenerator = function* (max = Infinity) {
 	
-	// possible prime factors; these prime numbers are going to divide / test the numbers which are possible to be primes. It's basically just all prime numbers except 2
+	// possible prime factors; these prime numbers are going to divide / test the numbers which are possible to be primes. It's basically just all prime numbers except 2 because it's pointless to check 2
 	const primeFactors = [];
 	
+	// function to check whether a number is prime or not
 	const checkPrime = num => {
 		for(let i = 0; i < primeFactors.length; i++) {
 			
@@ -44,26 +45,26 @@ const primeNumberGenerator = function* () {
 		return true;
 	};
 	
-	// first prime number is 2
+	// the only even number which is a prime, rather than calculate it. Hardcode it should be a better option
 	yield 2;
 	
-	for(let i = 3;; i += 2) {
+	// !!! important : step 2 for each loop. To skip all the even numbers.
+	for(let i = 3; i <= max; i += 2) {
 		if (checkPrime(i)) {
+			
+			// add this number to the list, for checking purpose of the coming numbers.
 			primeFactors.push(i);
+			
+			// output
 			yield i;
 		}
 	}
 };
 
-// generate the first 100 prime numbers
-let count = 0;
-
-for(let primeNumber of primeNumberGenerator()) {
+// generate all primenumbers under 100
+for(let primeNumber of primeNumberGenerator(100)) {
 	console.log(primeNumber);
-	count++;
-	if (count >= 100) { break; }
 }
-
 ```
 
 2018-06-26
