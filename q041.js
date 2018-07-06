@@ -37,15 +37,23 @@ For example :
 // ================================================================================
 
 const ODD_DIGIT_SET = [...'02468'];
-const DIGIT_CHARACTER_SET = '9876543210';
+const DIGIT_CHARACTER_SET = '1234567890';
 
 
 // ================================================================================
 //    FUNCTIONS
 // ================================================================================
 
+const digitCharSetGenerator = function* (charSet) {
+	const original = charSet;
+	for(let i = charSet.length; i > 0; i--) {
+		const outputChars = original.substr(0, i);
+		yield [...outputChars].sort().reverse().join('');
+	}
+};
+
 const oddPandigitalNumberGenerator = function* (digitsString, topLevel = true) {
-	let min = Infinity;
+	
 	if (digitsString.length === 2) {
 		const [a, b] = digitsString;
 		yield a + b;
@@ -58,10 +66,13 @@ const oddPandigitalNumberGenerator = function* (digitsString, topLevel = true) {
 
 			for(let combination of oddPandigitalNumberGenerator(restChars)) {
 				const outputStr = pivot + combination;
-				if (parseInt(outputStr) <= min) { min = parseInt(outputStr); } else { throw new Error('fuck'); }
 				
-				// odd number check
-				if (ODD_DIGIT_SET.includes(combination[combination.length - 1])) { continue; }
+				// odd number check, ignore if it's an odd number
+				if (ODD_DIGIT_SET.includes(outputStr[outputStr.length - 1])) { continue; }
+				
+				// first character can't be started by zero
+				if (outputStr[0] === '0') { continue; }
+				
 				yield outputStr;
 				
 			}
@@ -73,10 +84,10 @@ const oddPandigitalNumberGenerator = function* (digitsString, topLevel = true) {
 
 
 const rawCheckPrime = num => {
-	for(let i = 1;; i += 2) {
+	for(let i = 3;; i += 2) {
 		const test = num / i;
 		if (Number.isInteger(test)) { return false; }
-		if (test > i) { break; }
+		if (i > test) { return true; }
 	}
 	return true;
 };
@@ -88,14 +99,12 @@ const rawCheckPrime = num => {
 // ================================================================================
 
 const answer = () => {
-	const digitCharSet = DIGIT_CHARACTER_SET;
-	
-	do {
-		for (let combination of oddPandigitalNumberGenerator(digitCharSet)) {
-			console.log(combination);
+	for(let digitCharSet of digitCharSetGenerator(DIGIT_CHARACTER_SET)) {	
+		for (let combinationStr of oddPandigitalNumberGenerator(digitCharSet)) {
+			const combination = parseInt(combinationStr);
+			if (rawCheckPrime(combination)) { return combination; }
 		}
-	} while((digitCharSet = digitCharSet.substr(1 - digitCharSet.length)).length > 1);
-	
+	}
 };
 
 console.log(answer());
