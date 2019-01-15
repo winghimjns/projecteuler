@@ -37,11 +37,10 @@ Your task has been made easy, as the encryption key consists of three lower case
 // ================================================================================
 
 const PASSWORD_LENGTH = 3;
-const FREEQUENCY_LIST = [
-  101, 69, // E
-  116, 84, // T
-  97, 65, // A
-];
+const CHAR_START = 32; // space
+const CHAR_END = 126; // tilde ~
+const lowerList = [...'abcdefghijklmnopqrstuvwxyz'].map(ch => ch.charCodeAt(0));
+const charList = [...Array(122 - 32 + 1).keys()].map(i => i + 32); // from 32 to 122
 
 // ================================================================================
 //    FUNCTIONS
@@ -49,30 +48,69 @@ const FREEQUENCY_LIST = [
 
 // to group those contents into 3 arrays
 const group = (arr, count) => arr.reduce((acc, curr, index) => { acc[index % count].push(curr); return acc; }, [...(new Array(count))].map(() => []));
+const makeFrequencyList = list => {
+  const frequencySet = {};
+  list.forEach(code => frequencySet.hasOwnProperty(code) ? frequencySet[code]++ : frequencySet[code] = 1);
+  const frequencyArr = [];
+  for(let key in frequencySet) { frequencyArr.push({ code: parseInt(key), value: frequencySet[key] }); }
+  frequencyArr.sort((a,b)=> b.value - a.value);
+  return frequencyArr;
+}
 
+const possibleCombinationsGenerator = function*(possibleKeySets) {
+  const [currentSet, ...otherSets] = possibleKeySets;
+  if (otherSets.length === 0) {
+    for(let i = 0; i < currentSet.length; i++) {
+      yield [ currentSet[i] ];
+    }
+  }
+  else {
+    for(let i = 0; i < currentSet.length; i++) {
+      const item = currentSet[i];
+      const list = [...possibleCombinationsGenerator(otherSets)];
+      for(let j = 0; j < list.length; j++) {
+        const itemRest = list[j];
+        yield [item, ...itemRest];
+      }
+    }
+  }
+};
+
+const possibleResultGenerator = function*(cipherTextCharCodes, possibleKeySets) {
+  const combinations = [...possibleCombinationsGenerator(possibleKeySets)];
+  for(let i = 0; i < combinations.length; i++) {
+    const combination = combinations[i];
+    yield cipherTextCharCodes.map((charCode, index) => String.fromCharCode(charCode ^ combination[index % combination.length])).join('');
+  }
+};
 
 const answer = () => {
   const cipherList = fileContent.split(',');
   const cipherListSeparated = group(cipherList, PASSWORD_LENGTH);
 
-  cipherListSeparated.forEach((list, index) => {
-    if (index !== 0) { return; }
-    const frequencySet = {};
-    list.forEach(code => frequencySet.hasOwnProperty(code) ? frequencySet[code]++ : frequencySet[code] = 1);
-    const frequencyArr = [];
-    for(let key in frequencySet) { frequencyArr.push({ code: parseInt(key), value: frequencySet[key] }); }
-    frequencyArr.sort((a,b)=> b.value - a.value);
+  const keySets = cipherListSeparated.map((list, index) => {
 
-    // so we get the frequency list sorted now here: frequencyArr
+    const frequencyArr = makeFrequencyList(list);
 
-    FREEQUENCY_LIST.forEach((tryCode, index) => {
-      if (index !== 0) { return; }
-      frequencyArr.forEach(item => {
-        const tryPass = item.code ^ tryCode;
-      });
+    let keySet = [];
+    lowerList.forEach(keyTry => {
+      const plainList = list.map(cipherCode => cipherCode ^ keyTry);
+      const filterPlainList = plainList.filter(plainCode => charList.includes(plainCode));
+      if (plainList.length === filterPlainList.length) { keySet.push(keyTry); }
     });
 
+    return keySet;
   });
+
+  // so now we get all the possible keys, which are verified can decode the cipher text to be plain text with english characters
+  // so we should try all ciphertext and see which is most likely written in English.... which has the most 'e's
+  const plainTextList = [...possibleResultGenerator(cipherList, keySets)];
+
+  const eCounts = plainTextList.map((plainText, index) => [...plainText.toLowerCase()].filter(ch => ch === 'e').length);
+  const plainText = plainTextList[eCounts.indexOf(Math.max(...eCounts))];
+
+  return [...plainText].reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+
 };
 
 console.log(answer());
